@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Ngày Phụ Nữ Việt Nam 20/10</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #f0e6f6;
+            font-family: 'Arial', sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        .message {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: #d5006d;
+            text-align: center;
+            z-index: 1;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 80%;
+            width: 400px;
+        }
+        .message p {
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        @media (max-width: 768px) {
+            .message {
+                font-size: 18px;
+                bottom: 10px;
+                padding: 10px;
+                width: 80%;
+            }
+        }
+        @media (max-width: 480px) {
+            .message {
+                font-size: 16px;
+                bottom: 5px;
+                padding: 8px;
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="message">
+        <p>Phụ nữ Việt Nam - Đóa hoa tươi thắm</p>
+        <p>Dịu dàng, mạnh mẽ, trái tim nhân hậu</p>
+        <p>Ngày 20/10 - Ngày của bạn nói riêng và phụ nữ Việt Nam nói chung</p>
+        <p>Chúc bạn luôn xinh đẹp, hạnh phúc trọn đời</p>
+    </div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const image = new Image();
+        image.src = 'z5947676219321_58d9681ed8738366513149ea7f7b4870.jpg'; // Thay thế bằng đường dẫn thực tế đến ảnh của bạn
+        let imageData;
+        let pixels = [];
+        let currentPixel = 0;
+
+        image.onload = function() {
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+
+            const aspectRatio = image.width / image.height;
+            let drawWidth, drawHeight;
+
+            if (canvas.width / canvas.height > aspectRatio) {
+                drawHeight = canvas.height;
+                drawWidth = drawHeight * aspectRatio;
+            } else {
+                drawWidth = canvas.width;
+                drawHeight = drawWidth / aspectRatio;
+            }
+
+            const x = (canvas.width - drawWidth) / 2;
+            const y = (canvas.height - drawHeight) / 2;
+
+            tempCtx.drawImage(image, x, y, drawWidth, drawHeight);
+            imageData = tempCtx.getImageData(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                if (imageData.data[i + 3] > 0) { // Chỉ vẽ các pixel không trong suốt
+                    pixels.push({
+                        x: (i / 4) % canvas.width,
+                        y: Math.floor((i / 4) / canvas.width),
+                        color: `rgb(${imageData.data[i]}, ${imageData.data[i + 1]}, ${imageData.data[i + 2]})`
+                    });
+                }
+            }
+
+            // Xáo trộn mảng pixels để tạo hiệu ứng ngẫu nhiên
+            pixels = pixels.sort(() => Math.random() - 0.5);
+
+            animate();
+        };
+
+        function drawPixel() {
+            if (currentPixel < pixels.length) {
+                const pixel = pixels[currentPixel];
+                ctx.fillStyle = pixel.color;
+                ctx.fillRect(pixel.x, pixel.y, 1, 1);
+                currentPixel++;
+            }
+        }
+
+        function animate() {
+            for (let i = 0; i < 1000; i++) { // Vẽ 1000 pixel mỗi frame
+                drawPixel();
+            }
+            if (currentPixel < pixels.length) {
+                requestAnimationFrame(animate);
+            }
+        }
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            if (imageData) {
+                redrawImage();
+            }
+        }
+
+        function redrawImage() {
+            // Reset các biến
+            pixels = [];
+            currentPixel = 0;
+
+            // Vẽ lại ảnh với kích thước mới
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+
+            const aspectRatio = image.width / image.height;
+            let drawWidth, drawHeight;
+
+            if (canvas.width / canvas.height > aspectRatio) {
+                drawHeight = canvas.height;
+                drawWidth = drawHeight * aspectRatio;
+            } else {
+                drawWidth = canvas.width;
+                drawHeight = drawWidth / aspectRatio;
+            }
+
+            const x = (canvas.width - drawWidth) / 2;
+            const y = (canvas.height - drawHeight) / 2;
+
+            tempCtx.drawImage(image, x, y, drawWidth, drawHeight);
+            imageData = tempCtx.getImageData(0, 0, canvas.width, canvas.height);
+
+            // Tạo lại mảng pixels
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                if (imageData.data[i + 3] > 0) {
+                    pixels.push({
+                        x: (i / 4) % canvas.width,
+                        y: Math.floor((i / 4) / canvas.width),
+                        color: `rgb(${imageData.data[i]}, ${imageData.data[i + 1]}, ${imageData.data[i + 2]})`
+                    });
+                }
+            }
+
+            pixels = pixels.sort(() => Math.random() - 0.5);
+
+            // Xóa canvas và bắt đầu vẽ lại
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            animate();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+    </script>
+</body>
+</html>
